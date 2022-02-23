@@ -1,0 +1,74 @@
+\documentclass[a4paper, 11pt]{article}
+    \usepackage[utf8]{inputenc}
+    \usepackage[czech]{babel}
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{indentfirst}
+    \usepackage{graphicx}
+    \usepackage{hyperref}
+    \usepackage{color} 
+    \usepackage{multirow}
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+
+
+    \title{xklemr00\_knn\_project\_documentation}
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+\begin{document}
+    \begin{titlepage}
+ \begin{center}
+  {\Huge\textsc{Vysoké učení technické v Brně\\[0.3em]
+    \huge{Fakulta informačních technologií}}}\\
+  \vspace{\stretch{0.382}}
+  {\Huge
+  Projektová dokumentace k projektu z předmětu KNN -- Image inpainting}
+  \vspace{\stretch{0.618}}
+ \end{center}
+ {\Large 
+ \today 
+ \hfill
+%  TBD autori zde?
+}
+\end{titlepage}
+
+\newpage
+\section{Úvod}
+\label{section:uvod}
+TBD
+\end{document}
