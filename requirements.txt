@@ -1,0 +1,5 @@
+opencv-python~=4.5.5.64
+numpy~=1.22.3
+tensorflow~=2.8.0
+PyYAML~=6.0
+tf-slim~=1.1.0
