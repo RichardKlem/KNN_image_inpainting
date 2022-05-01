@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from keras.layers import Conv2D
 import tensorflow as tf
+from tensorflow import Tensor
 from tf_slim import add_arg_scope
 
 from neuralgym.ops.layers import resize
@@ -154,17 +155,39 @@ def bbox2mask(bbox, config, name='mask'):
 
 def local_patch(x, bbox):
     """Crop local patch according to bbox.
-
     Args:
         x: input
         bbox: (top, left, height, width)
 
     Returns:
         tf.Tensor: local patch
-
     """
     x = tf.image.crop_to_bounding_box(x, bbox[0], bbox[1], bbox[2], bbox[3])
     return x
+
+def edge_patch(x, bbox):
+    """Crop edges patch according to bbox.
+    Args:
+        x: input
+        bbox: (top, left, height, width)
+
+    Returns:
+        tf.Tensor: edges patch
+    """
+
+    margin_h = tf.keras.backend.get_value(bbox[2]) // 10 - 1
+    margin_w = tf.keras.backend.get_value(bbox[3]) // 10 - 1
+    top = bbox[0]
+    left = bbox[1]
+    # TODO refactor hodnot
+    if tf.keras.backend.get_value(top) - margin_h > 0 or tf.keras.backend.get_value(top) + 2 * margin_h + tf.keras.backend.get_value(bbox[2]) < 255:
+        top = top - margin_h
+    if tf.keras.backend.get_value(left) - margin_w > 0 or tf.keras.backend.get_value(left) + 2 * margin_w + tf.keras.backend.get_value(bbox[3]) < 255:
+        left = left - margin_w
+
+    x = tf.image.crop_to_bounding_box(x, top, left, bbox[2] + 2 * margin_h, bbox[3] + 2 * margin_w)
+    return x
+
 
 
 def resize_mask_like(mask, x):

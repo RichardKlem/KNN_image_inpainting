@@ -1,5 +1,3 @@
-import os
-import glob
 import socket
 import logging
 
