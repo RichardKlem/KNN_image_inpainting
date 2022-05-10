@@ -1,7 +1,12 @@
 # KNN_image_inpainting
-Image inpainting
+Image inpainting with edge focused WGAN-GP adversarial loss
 
-[//]: # (TODO - doplnit nejake zakladni info, loginy, puvondi clanek apod.)
+This work is based on this paper: https://arxiv.org/abs/1801.07892
+
+We improved the original model.
+The work is still in the progress.
+
+Authors: Tomáš Beránek (xberan46), Richard Klem (xklemr00)
 
 # How to ... common stuff
 1. Install requirements: `pip install -r requirements.txt`
@@ -14,9 +19,9 @@ Image inpainting
 # How to TRAIN 
 1. Install requirements. (optional)
 2. Download dataset and insert it in `data` folder.
-3. Create a `.flist` file where are paths to the dataset files. (each file one line)
+3. Create a `.flist` file where are paths to the dataset files (each file on one line). It could be relative paths or absolute paths.
 4. Continue as described in README.md in `generative_inpainting` subfolder.
 
 # Licensing + Credits
-Part of the generative_inpainting is also neuralgym folder.
-Both folders have origin in <TODO> .
+Part of the [generative_inpainting](https://github.com/JiahuiYu/generative_inpainting) is also [neuralgym](https://github.com/JiahuiYu/neuralgym) folder.
+Both folders have origin in repositories of [Jiahui Yu](https://github.com/JiahuiYu).
