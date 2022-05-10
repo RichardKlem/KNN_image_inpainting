@@ -55,24 +55,30 @@
  \begin{center}
   {\Huge\textsc{Brno University of Technology\\[0.3em]
     \huge{Faculty of Information Technology}}}\\
-  \vspace{\stretch{0.382}}
+  \vspace{\stretch{0.352}}
   {\Huge
-  Generative image inpainting enhanced with edge focused WGAN-GP adversarial loss.}
-  \vspace{\stretch{0.618}}
+  Generative image inpainting enhanced with edge focused WGAN-GP adversarial loss.}\\
+  \vspace{\stretch{0.06}}
+  {\Large Authors: Tomáš Beránek (xberan46), Richard Klem (xklemr00)}
+  \vspace{\stretch{0.568}}
  \end{center}
  {\Large 
  \today 
  \hfill
-%  TBD autori zde?
 }
 \end{titlepage}
 
 \newpage
 \section{Abstract}
 \label{section:abstract}
+We improved the original model by adding third discriminator. The original solution uses local discriminator to calculate loss on the generated patch and global discriminator to calculate loss on the whole image. But very often, we can see clearly the edges of the patch, because there is no special attention to smooth transition between the generated patch and the rest of the image. We decided to provide a new discriminator, which will be focusing on the path with the near surroundings. This should help the generator to learn how to make a better transitions on the edges of the patch.
 
 \section{Introduction}
 \label{section:introduction}
+For the time reasons, we made a decision to use just a subset of the Places2 dataset. We reduced our dataset to the 7 categories: \textit{army\_base}, \textit{badlands}, \textit{corn\_field},
+\textit{forest\_path}, \textit{golf\_course}, \textit{hayfield} and \textit{mountain}. It makes 35 thousands of pictures in total. 3500 pictures were selected as testing/validation set.
+The rest of 31 500 images serve as a training set.
+
 
 \section{The original work and article}
 \label{section:origin}
@@ -89,5 +95,75 @@
         \includegraphics[width=0.95\linewidth]{documentation/img/new_arch.png}
     \end{figure}
 
+\section{Training, testing and validation}
+\label{section:training}
+We have trained both the baseline and our modified model from scratch, so we can do a comparison.
+
+\section{Results and conclusions}
+\label{section:results}
+You can see some examples bellow. Every time it is from the left, to the right the original input image, baseline model output, our new improved model output.
+\begin{figure}
+    \centering
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{documentation/img/corny_field.jpg}
+    \end{minipage}%
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{documentation/img/corny_field_out_45k.png}
+    \end{minipage}
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{documentation/img/hayfield.jpg}
+    \end{minipage}%
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{documentation/img/hayfield_out_45k.png}
+    \end{minipage}
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{documentation/img/badlands.jpg}
+    \end{minipage}%
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{documentation/img/badlands_out_45k.png}
+    \end{minipage}
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{documentation/img/forest_path.jpg}
+    \end{minipage}%
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{documentation/img/forest_path_out_45k.png}
+    \end{minipage}
+    \begin{minipage}{.3\textwidth}
+      \centering
+      \includegraphics[width=.95\linewidth]{}
+    \end{minipage}
+\end{figure}
 
 \end{document}
