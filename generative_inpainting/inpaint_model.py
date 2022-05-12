@@ -13,7 +13,7 @@ from neuralgym.ops.layers import flatten, resize
 from neuralgym.ops.gan_ops import gan_wgan_loss, gradients_penalty
 from neuralgym.ops.gan_ops import random_interpolates
 
-from inpaint_ops import gen_conv, gen_deconv, dis_conv, edge_patch
+from inpaint_ops import gen_conv, gen_deconv, dis_conv, edges_random_bbox
 from inpaint_ops import random_bbox, bbox2mask, local_patch
 from inpaint_ops import spatial_discounting_mask
 from inpaint_ops import resize_mask_like, contextual_attention
@@ -128,12 +128,14 @@ class InpaintCAModel(Model):
             return x
 
     def build_wgan_edges_discriminator(self, x, reuse=False, training=True):
-        with tf.compat.v1.variable_scope('discriminator_local', reuse=reuse):
+        with tf.compat.v1.variable_scope('discriminator_edge', reuse=reuse):
             cnum = 64
             x = dis_conv(x, cnum, name='conv1', training=training)
             x = dis_conv(x, cnum * 2, name='conv2', training=training)
             x = dis_conv(x, cnum * 4, name='conv3', training=training)
-            x = dis_conv(x, cnum * 8, name='conv4', training=training)
+            # We have 256x256 px cropped image, 128 is local patch and 128+32=160px edges patch
+            # So if we have cnum*4 on global 256 and 8*cnum on local, I guess we want 7*cnum on edges patch.
+            x = dis_conv(x, cnum * 7, name='conv4', training=training)
             x = flatten(x, name='flatten')
             return x
 
@@ -156,6 +158,7 @@ class InpaintCAModel(Model):
         batch_pos = batch_data / 127.5 - 1.
         # generate mask, 1 represents masked point
         bbox = random_bbox(config)
+        edges_bbox = edges_random_bbox(config)
         mask = bbox2mask(bbox, config, name='mask_c')
         batch_incomplete = batch_pos * (1. - mask)
         x1, x2, offset_flow = self.build_inpaint_net(
@@ -172,14 +175,17 @@ class InpaintCAModel(Model):
         batch_complete = batch_predicted * mask + batch_incomplete * (1. - mask)
         # local patches
         local_patch_batch_pos = local_patch(batch_pos, bbox)
-        edges_patch_batch_pos = edge_patch(batch_pos, bbox)
+        #edges_patch_batch_pos = edge_patch(batch_pos, bbox)
+        edges_patch_batch_pos = local_patch(batch_pos, edges_bbox)
         # local_patch_batch_predicted = local_patch(batch_predicted, bbox)  # not used
         local_patch_x1 = local_patch(x1, bbox)
         local_patch_x2 = local_patch(x2, bbox)
         local_patch_batch_complete = local_patch(batch_complete, bbox)
-        edges_patch_batch_complete = edge_patch(batch_complete, bbox)
+        #edges_patch_batch_complete = edge_patch(batch_complete, bbox)
+        edges_patch_batch_complete = local_patch(batch_complete, edges_bbox)
         local_patch_mask = local_patch(mask, bbox)
-        edges_patch_mask = edge_patch(mask, bbox)
+        #edges_patch_mask = edge_patch(mask, bbox)
+        edges_patch_mask = local_patch(mask, edges_bbox)
         l1_alpha = config.COARSE_L1_ALPHA
         losses['l1_loss'] = l1_alpha * tf.reduce_mean(
             tf.abs(local_patch_batch_pos - local_patch_x1) * spatial_discounting_mask(config))

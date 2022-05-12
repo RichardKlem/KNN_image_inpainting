@@ -120,6 +120,33 @@ def random_bbox(config):
     return (t, l, h, w)
 
 
+def edges_random_bbox(config):
+    """Generate a random tlhw with configuration.
+
+    Args:
+        config: Config should have configuration including IMG_SHAPES,
+            VERTICAL_MARGIN, HEIGHT, HORIZONTAL_MARGIN, WIDTH.
+
+    Returns:
+        tuple: (top, left, height, width)
+
+    """
+    img_shape = config.IMG_SHAPES
+    img_height = img_shape[0]
+    img_width = img_shape[1]
+    config.VERTICAL_MARGIN = 16
+    config.HORIZONTAL_MARGIN = 16
+    maxt = img_height - config.VERTICAL_MARGIN - config.HEIGHT
+    maxl = img_width - config.HORIZONTAL_MARGIN - config.WIDTH
+    t = tf.random.uniform(
+        [], minval=config.VERTICAL_MARGIN, maxval=maxt, dtype=tf.int32)
+    l = tf.random.uniform(
+        [], minval=config.HORIZONTAL_MARGIN, maxval=maxl, dtype=tf.int32)
+    h = tf.constant(config.HEIGHT + config.VERTICAL_MARGIN)
+    w = tf.constant(config.WIDTH + config.HORIZONTAL_MARGIN)
+    return (t, l, h, w)
+
+
 def bbox2mask(bbox, config, name='mask'):
     """Generate mask tensor from bbox.
 
