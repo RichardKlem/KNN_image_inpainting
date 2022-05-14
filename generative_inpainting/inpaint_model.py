@@ -13,7 +13,7 @@ from neuralgym.ops.layers import flatten, resize
 from neuralgym.ops.gan_ops import gan_wgan_loss, gradients_penalty
 from neuralgym.ops.gan_ops import random_interpolates
 
-from inpaint_ops import gen_conv, gen_deconv, dis_conv, edges_random_bbox
+from inpaint_ops import gen_conv, gen_deconv, dis_conv, edges_random_bbox, bbox_from_edge_bbox
 from inpaint_ops import random_bbox, bbox2mask, local_patch
 from inpaint_ops import spatial_discounting_mask
 from inpaint_ops import resize_mask_like, contextual_attention
@@ -157,8 +157,8 @@ class InpaintCAModel(Model):
                                 summary=False, reuse=False):
         batch_pos = batch_data / 127.5 - 1.
         # generate mask, 1 represents masked point
-        bbox = random_bbox(config)
         edges_bbox = edges_random_bbox(config)
+        bbox = bbox_from_edge_bbox(edges_bbox)
         mask = bbox2mask(bbox, config, name='mask_c')
         batch_incomplete = batch_pos * (1. - mask)
         x1, x2, offset_flow = self.build_inpaint_net(

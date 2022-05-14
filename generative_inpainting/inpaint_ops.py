@@ -134,16 +134,23 @@ def edges_random_bbox(config):
     img_shape = config.IMG_SHAPES
     img_height = img_shape[0]
     img_width = img_shape[1]
-    config.VERTICAL_MARGIN = 16
-    config.HORIZONTAL_MARGIN = 16
-    maxt = img_height - config.VERTICAL_MARGIN - config.HEIGHT
-    maxl = img_width - config.HORIZONTAL_MARGIN - config.WIDTH
+    # we have to add surroundings for edge detection --> +32
+    maxt = img_height - config.VERTICAL_MARGIN - (config.HEIGHT + 32)
+    maxl = img_width - config.HORIZONTAL_MARGIN - (config.WIDTH + 32)
     t = tf.random.uniform(
         [], minval=config.VERTICAL_MARGIN, maxval=maxt, dtype=tf.int32)
     l = tf.random.uniform(
         [], minval=config.HORIZONTAL_MARGIN, maxval=maxl, dtype=tf.int32)
-    h = tf.constant(config.HEIGHT + config.VERTICAL_MARGIN)
-    w = tf.constant(config.WIDTH + config.HORIZONTAL_MARGIN)
+    h = tf.constant(config.HEIGHT + 32)
+    w = tf.constant(config.WIDTH + 32)
+    return (t, l, h, w)
+
+
+def bbox_from_edge_bbox(edge_bbox):
+    t = edge_bbox[0] + 16
+    l = edge_bbox[1] + 16
+    h = edge_bbox[2] - 32
+    w = edge_bbox[3] - 32
     return (t, l, h, w)
 
 
