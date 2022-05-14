@@ -129,6 +129,12 @@ class InpaintCAModel(Model):
 
     def build_wgan_edges_discriminator(self, x, reuse=False, training=True):
         with tf.compat.v1.variable_scope('discriminator_edge', reuse=reuse):
+            # extract edges from local patch + surroundings
+            x = tf.image.rgb_to_grayscale(x)
+            x = tf.image.sobel_edges(x)
+            # add horizontal and vertical edges together
+            x = tf.reduce_sum(x, 4)
+
             cnum = 64
             x = dis_conv(x, cnum, name='conv1', training=training)
             x = dis_conv(x, cnum * 2, name='conv2', training=training)
