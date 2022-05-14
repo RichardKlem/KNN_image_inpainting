@@ -173,18 +173,17 @@ class InpaintCAModel(Model):
         losses = {}
         # apply mask and complete image
         batch_complete = batch_predicted * mask + batch_incomplete * (1. - mask)
+
         # local patches
         local_patch_batch_pos = local_patch(batch_pos, bbox)
-        #edges_patch_batch_pos = edge_patch(batch_pos, bbox)
         edges_patch_batch_pos = local_patch(batch_pos, edges_bbox)
+
         # local_patch_batch_predicted = local_patch(batch_predicted, bbox)  # not used
         local_patch_x1 = local_patch(x1, bbox)
         local_patch_x2 = local_patch(x2, bbox)
         local_patch_batch_complete = local_patch(batch_complete, bbox)
-        #edges_patch_batch_complete = edge_patch(batch_complete, bbox)
         edges_patch_batch_complete = local_patch(batch_complete, edges_bbox)
         local_patch_mask = local_patch(mask, bbox)
-        #edges_patch_mask = edge_patch(mask, bbox)
         edges_patch_mask = local_patch(mask, edges_bbox)
         l1_alpha = config.COARSE_L1_ALPHA
         losses['l1_loss'] = l1_alpha * tf.reduce_mean(
