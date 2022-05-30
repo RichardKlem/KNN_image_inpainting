@@ -1,24 +1,28 @@
 import argparse
 import os
 import random
-from matplotlib import image
-from matplotlib import pyplot
-import matplotlib as plt
-import matplotlib.pyplot as pyplot
-import numpy as np
 import subprocess
+
+import matplotlib as plt
+import numpy as np
 
 
 def init_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--baseline', required=True, type=str, help='The directory which contains baseline model.')
-    parser.add_argument('-m', '--modified', required=True, type=str, help='The directory which contains modified model.')
-    parser.add_argument('-o', '--outdir', required=True, type=str, help='The directory into which generated samples are saved.')
-    parser.add_argument('-t', '--script-dir', required=True, type=str, help='The directory with test.py script that runs model.')
+    parser.add_argument('-b', '--baseline', required=True, type=str,
+                        help='The directory which contains baseline model.')
+    parser.add_argument('-m', '--modified', required=True, type=str,
+                        help='The directory which contains modified model.')
+    parser.add_argument('-o', '--outdir', required=True, type=str,
+                        help='The directory into which generated samples are saved.')
+    parser.add_argument('-t', '--script-dir', required=True, type=str,
+                        help='The directory with test.py script that runs model.')
     parser.add_argument('-f', '--flist', required=True, type=str, help='The .flist file.')
     parser.add_argument('-n', '--samples', required=True, type=int, help='The number of generated samples.')
-    parser.add_argument('--show-names', default=False, action='store_true', help='If passed, then the app shows source of impainted image (baseline or modified model).')
-    parser.add_argument('--save-only-inpainting', default=False, action='store_true', help='If passed, then only the inpainted regions are saved.')
+    parser.add_argument('--show-names', default=False, action='store_true',
+                        help='If passed, then the app shows source of impainted image (baseline or modified model).')
+    parser.add_argument('--save-only-inpainting', default=False, action='store_true',
+                        help='If passed, then only the inpainted regions are saved.')
     return parser
 
 
@@ -40,11 +44,11 @@ if __name__ == '__main__':
     original_cwd = os.getcwd() + '/'
     args.baseline = original_cwd + args.baseline
     args.modified = original_cwd + args.modified
-    args.outdir   = original_cwd + args.outdir
+    args.outdir = original_cwd + args.outdir
 
     baseline_out_dir = args.outdir + 'baseline/'
     modified_out_dir = args.outdir + 'modified/'
-    masks_out_dir    = args.outdir + 'masks/'
+    masks_out_dir = args.outdir + 'masks/'
 
     # create output dirs
     if not os.path.exists(args.outdir):
@@ -81,30 +85,32 @@ if __name__ == '__main__':
         # add rectangles to mask
         for _ in range(random.randint(1, max_mask_rectangles)):
             t, l, r, b = random_bbox(h, w)
-            mask[t:b, l:r] = np.ones((b-t, r-l, c), dtype=float)
+            mask[t:b, l:r] = np.ones((b - t, r - l, c), dtype=float)
 
         # safe mask
-        mask_file = masks_out_dir + str(i+1).rjust(4, '0') + '_mask.png'
+        mask_file = masks_out_dir + str(i + 1).rjust(4, '0') + '_mask.png'
         plt.image.imsave(mask_file, mask)
 
         # inpaint image using both models
         os.chdir(args.script_dir)
 
-        out_baseline_file = baseline_out_dir + str(i+1).rjust(4, '0') + '.png'
-        subprocess.run(['python3', 'test.py', '--image', image_file, '--mask', mask_file, '--output', out_baseline_file, '--checkpoint', args.baseline])
+        out_baseline_file = baseline_out_dir + str(i + 1).rjust(4, '0') + '.png'
+        subprocess.run(['python3', 'test.py', '--image', image_file, '--mask', mask_file, '--output', out_baseline_file,
+                        '--checkpoint', args.baseline])
 
-        out_modified_file = modified_out_dir + str(i+1).rjust(4, '0') + '.png'
-        subprocess.run(['python3', 'test.py', '--image', image_file, '--mask', mask_file, '--output', out_modified_file, '--checkpoint', args.modified])
+        out_modified_file = modified_out_dir + str(i + 1).rjust(4, '0') + '.png'
+        subprocess.run(['python3', 'test.py', '--image', image_file, '--mask', mask_file, '--output', out_modified_file,
+                        '--checkpoint', args.modified])
 
         os.chdir(original_cwd)
 
         # optionally save inpainted region
-        region_baseline_file = baseline_out_dir + str(i+1).rjust(4, '0') + '_region.png'
+        region_baseline_file = baseline_out_dir + str(i + 1).rjust(4, '0') + '_region.png'
         image_baseline = plt.image.imread(out_baseline_file)
         inpainted_region_baseline = image_baseline[t:b, l:r]
         plt.image.imsave(region_baseline_file, inpainted_region_baseline)
 
-        region_modified_file = modified_out_dir + str(i+1).rjust(4, '0') + '_region.png'
+        region_modified_file = modified_out_dir + str(i + 1).rjust(4, '0') + '_region.png'
         image_modified = plt.image.imread(out_modified_file)
         inpainted_region_modified = image_modified[t:b, l:r]
         plt.image.imsave(region_modified_file, inpainted_region_modified)

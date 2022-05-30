@@ -1,14 +1,17 @@
 import argparse
-from PIL import Image
-import numpy as np
 import os
 import statistics
+
+import numpy as np
+from PIL import Image
 
 
 def init_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--baseline', required=True, type=str, help='The directory which contains baseline images named \'N_region.png\'.')
-    parser.add_argument('-m', '--modified', required=True, type=str, help='The directory which contains modified images named \'N_region.png\'.')
+    parser.add_argument('-b', '--baseline', required=True, type=str,
+                        help='The directory which contains baseline images named \'N_region.png\'.')
+    parser.add_argument('-m', '--modified', required=True, type=str,
+                        help='The directory which contains modified images named \'N_region.png\'.')
     return parser
 
 
@@ -23,7 +26,7 @@ def sharpness(image_file):
         return -1
 
     y_grad, x_grad = np.gradient(image)
-    grad = np.sqrt(x_grad**2 + y_grad**2)
+    grad = np.sqrt(x_grad ** 2 + y_grad ** 2)
     sharpness = np.average(grad)
     return sharpness
 

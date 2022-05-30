@@ -1,8 +1,9 @@
 # Import required libraries
+import random
 from tkinter import *
+
 from PIL import ImageTk, Image
 from matplotlib import image
-import random
 
 label1 = None
 label2 = None
@@ -11,10 +12,12 @@ i = 1
 mask = False
 swaped = False
 
+
 def get_shape(file):
     img = image.imread(file)
     h, w, _ = img.shape
     return h, w
+
 
 def add_image(file, order, win):
     h, w = get_shape(file)
@@ -31,8 +34,9 @@ def add_image(file, order, win):
     img = ImageTk.PhotoImage(Image.open(file))
 
     # Create a Label Widget to display the text or Image
-    label = Label(frame, image = img)
+    label = Label(frame, image=img)
     label.pack()
+
 
 def button_callback_up():
     # default baseline
@@ -50,6 +54,7 @@ def button_callback_up():
         f.write(f"{file1}\t\t 1\n")
         f.write(f"{file2}\t\t 0\n")
 
+
 def button_callback_down():
     # default modified
     global i, swaped
@@ -65,6 +70,7 @@ def button_callback_down():
     with open("results.txt", "a") as f:
         f.write(f"{file1}\t\t 0\n")
         f.write(f"{file2}\t\t 1\n")
+
 
 def button_callback_next():
     global label1, label2, win, i, swaped
@@ -106,6 +112,7 @@ def button_callback_next():
     label2.configure(image=img2)
     label2.image = img2
 
+
 def button_callback_mask():
     global label1, label2, win, i, mask, swaped
 
@@ -143,11 +150,11 @@ def button_callback_mask():
         img2 = img2.resize((w, 512), Image.ANTIALIAS)
         img2 = ImageTk.PhotoImage(img2)
 
-
     label1.configure(image=img1)
     label1.image = img1
     label2.configure(image=img2)
     label2.image = img2
+
 
 win = Tk()
 
@@ -165,7 +172,7 @@ frame1.place(anchor='center', relx=0.5, rely=0.25)
 
 img1 = ImageTk.PhotoImage(Image.open(file1))
 
-label1 = Label(frame1, image = img1)
+label1 = Label(frame1, image=img1)
 label1.pack()
 
 frame2 = Frame(win, width=w, height=h)
@@ -174,17 +181,16 @@ frame2.place(anchor='center', relx=0.5, rely=0.75)
 
 img2 = ImageTk.PhotoImage(Image.open(file2))
 
-label2 = Label(frame2, image = img2)
+label2 = Label(frame2, image=img2)
 label2.pack()
 
 # add_image("output/baseline/0001.png", 1, win)
 # add_image("output/modified/0001.png", 2)
 
-b1 = Button(win, text ="Up", command = button_callback_up)
-b2 = Button(win, text ="Down", command = button_callback_down)
-b3 = Button(win, text ="Next", command = button_callback_next)
-b4 = Button(win, text ="Mask", command = button_callback_mask)
-
+b1 = Button(win, text="Up", command=button_callback_up)
+b2 = Button(win, text="Down", command=button_callback_down)
+b3 = Button(win, text="Next", command=button_callback_next)
+b4 = Button(win, text="Mask", command=button_callback_mask)
 
 b1.place(x=60, y=60)
 b2.place(x=60, y=110)

@@ -1,22 +1,19 @@
 """ common model for DCGAN """
 import logging
 
-import cv2
-import neuralgym as ng
 import tensorflow as tf
 from tf_slim import arg_scope
 
-from neuralgym.models import Model
-from neuralgym.ops.summary_ops import scalar_summary, images_summary
-from neuralgym.ops.summary_ops import gradients_summary
-from neuralgym.ops.layers import flatten, resize
-from neuralgym.ops.gan_ops import gan_wgan_loss, gradients_penalty
-from neuralgym.ops.gan_ops import random_interpolates
-
 from inpaint_ops import gen_conv, gen_deconv, dis_conv, edges_random_bbox, bbox_from_edge_bbox
 from inpaint_ops import random_bbox, bbox2mask, local_patch
-from inpaint_ops import spatial_discounting_mask
 from inpaint_ops import resize_mask_like, contextual_attention
+from inpaint_ops import spatial_discounting_mask
+from neuralgym.models import Model
+from neuralgym.ops.gan_ops import gan_wgan_loss, gradients_penalty
+from neuralgym.ops.gan_ops import random_interpolates
+from neuralgym.ops.layers import flatten, resize
+from neuralgym.ops.summary_ops import gradients_summary
+from neuralgym.ops.summary_ops import scalar_summary, images_summary
 
 logger = logging.getLogger()
 
@@ -29,14 +26,16 @@ class InpaintCAModel(Model):
                           training=True, padding='SAME', name='inpaint_net'):
         """Inpaint network.
 
-        Args:
-            x: incomplete image, [-1, 1]
-            mask: mask region {0, 1}
-        Returns:
-            [-1, 1] as predicted image
+        :param x: Input data - incomplete image, [-1, 1].
+        :param mask: Input mask, {0, 1} .
+        :param config: Config object.
+        :param reuse: Reuse flag, default=False.
+        :param training: Training flag, default=True.
+        :param padding: Padding variant, default='SAME'.
+        :param name: Name of the network, default='inpaint_net'.
+        :return:
         """
         xin = x
-        offset_flow = None
         ones_x = tf.ones_like(x)[:, :, :, 0:1]
         x = tf.concat([x, ones_x, ones_x * mask], axis=3)
 
@@ -67,11 +66,10 @@ class InpaintCAModel(Model):
             x_stage1 = x
 
             # stage2, paste result as input
-            # x = tf.stop_gradient(x)
-            x = x*mask + xin*(1.-mask)
+            x = x * mask + xin * (1. - mask)
             x.set_shape(xin.get_shape().as_list())
             # conv branch
-            xnow = tf.concat([x, ones_x, ones_x*mask], axis=3)
+            xnow = tf.concat([x, ones_x, ones_x * mask], axis=3)
             x = gen_conv(xnow, cnum, 5, 1, name='xconv1')
             x = gen_conv(x, cnum, 3, 2, name='xconv2_downsample')
             x = gen_conv(x, 2 * cnum, 3, 1, name='xconv3')
@@ -139,8 +137,6 @@ class InpaintCAModel(Model):
             x = dis_conv(x, cnum, name='conv1', training=training)
             x = dis_conv(x, cnum * 2, name='conv2', training=training)
             x = dis_conv(x, cnum * 4, name='conv3', training=training)
-            # We have 256x256 px cropped image, 128 is local patch and 128+32=160px edges patch
-            # So if we have cnum*4 on global 256 and 8*cnum on local, I guess we want 7*cnum on edges patch.
             x = dis_conv(x, cnum * 7, name='conv4', training=training)
             x = flatten(x, name='flatten')
             return x
@@ -184,7 +180,6 @@ class InpaintCAModel(Model):
         local_patch_batch_pos = local_patch(batch_pos, bbox)
         edges_patch_batch_pos = local_patch(batch_pos, edges_bbox)
 
-        # local_patch_batch_predicted = local_patch(batch_predicted, bbox)  # not used
         local_patch_x1 = local_patch(x1, bbox)
         local_patch_x2 = local_patch(x2, bbox)
         local_patch_batch_complete = local_patch(batch_complete, bbox)

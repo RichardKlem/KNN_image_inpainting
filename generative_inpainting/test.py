@@ -3,10 +3,9 @@ import argparse
 import cv2
 import numpy as np
 import tensorflow as tf
+
 import neuralgym as ng
-
 from inpaint_model import InpaintCAModel
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--image', default='', type=str,
@@ -18,10 +17,8 @@ parser.add_argument('-o', '--output', default='output.png', type=str,
 parser.add_argument('-c', '--checkpoint_dir', default='', type=str,
                     help='The directory of tensorflow checkpoint.')
 
-
 if __name__ == "__main__":
     FLAGS = ng.Config('inpaint.yml')
-    #ng.get_gpus(1)
     args, _ = parser.parse_known_args()
 
     model = InpaintCAModel()
@@ -32,8 +29,8 @@ if __name__ == "__main__":
 
     h, w, _ = image.shape
     grid = 8
-    image = image[:h//grid*grid, :w//grid*grid, :]
-    mask = mask[:h//grid*grid, :w//grid*grid, :]
+    image = image[:h // grid * grid, :w // grid * grid, :]
+    mask = mask[:h // grid * grid, :w // grid * grid, :]
     print('Shape of image: {}'.format(image.shape))
 
     image = np.expand_dims(image, 0)
