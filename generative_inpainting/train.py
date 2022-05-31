@@ -1,11 +1,9 @@
-import os
-import glob
-import socket
 import logging
+import socket
 
 import tensorflow as tf
-import neuralgym as ng
 
+import neuralgym as ng
 from inpaint_model import InpaintCAModel
 
 tf.compat.v1.disable_eager_execution()
@@ -32,15 +30,11 @@ def multigpu_graph_def(model, data, config, gpu_id=0, loss_type='g'):
 
 if __name__ == "__main__":
     config = ng.Config('inpaint.yml')
-    # if config.GPU_ID != -1:
-    #     ng.set_gpus(config.GPU_ID)
-    # else:
-    #     ng.get_gpus(config.NUM_GPUS)
     # training data
     with open(config.DATA_FLIST[config.DATASET][0]) as f:
         fnames = f.read().splitlines()
     data = ng.data.DataFromFNames(
-        fnames, config.IMG_SHAPES, random_crop=config.RANDOM_CROP)
+        fnames, config.IMG_SHAPES, random_crop=config.RANDOM_CROP, random=True)
     images = data.data_pipeline(config.BATCH_SIZE)
     # main model
     model = InpaintCAModel()
@@ -52,7 +46,7 @@ if __name__ == "__main__":
             val_fnames = f.read().splitlines()
         # progress monitor by visualizing static images
         for i in range(config.STATIC_VIEW_SIZE):
-            static_fnames = val_fnames[i:i+1]
+            static_fnames = val_fnames[i:i + 1]
             static_images = ng.data.DataFromFNames(
                 static_fnames, config.IMG_SHAPES, nthreads=1,
                 random_crop=config.RANDOM_CROP).data_pipeline(1)
@@ -75,9 +69,8 @@ if __name__ == "__main__":
     log_prefix = 'model_logs/' + '_'.join([
         ng.date_uid(), socket.gethostname(), config.DATASET,
         'MASKED' if config.GAN_WITH_MASK else 'NORMAL',
-        config.GAN,config.LOG_DIR])
-    # train discriminator with secondary trainer, should initialize before
-    # primary trainer.
+        config.GAN, config.LOG_DIR])
+    # Train discriminator with secondary trainer, should initialize before primary trainer.
     discriminator_training_callback = ng.callbacks.SecondaryTrainer(
         pstep=1,
         optimizer=d_optimizer,
@@ -105,9 +98,11 @@ if __name__ == "__main__":
         trainer.add_callbacks(discriminator_training_callback)
     trainer.add_callbacks([
         ng.callbacks.WeightsViewer(),
-        ng.callbacks.ModelRestorer(trainer.context['saver'], dump_prefix='model_logs/'+config.MODEL_RESTORE+'/snap', optimistic=True),
-        ng.callbacks.ModelSaver(config.TRAIN_SPE, trainer.context['saver'], log_prefix+'/snap'),
-        ng.callbacks.SummaryWriter((config.VAL_PSTEPS//1), trainer.context['summary_writer'], tf.compat.v1.summary.merge_all()),
+        ng.callbacks.ModelRestorer(trainer.context['saver'], dump_prefix='model_logs/' + config.MODEL_RESTORE + '/snap',
+                                   optimistic=True),
+        ng.callbacks.ModelSaver(config.TRAIN_SPE, trainer.context['saver'], log_prefix + '/snap'),
+        ng.callbacks.SummaryWriter((config.VAL_PSTEPS // 1), trainer.context['summary_writer'],
+                                   tf.compat.v1.summary.merge_all()),
     ])
     # launch training
     trainer.train()
