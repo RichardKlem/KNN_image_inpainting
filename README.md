@@ -44,10 +44,10 @@ slightly modified to make it all successfully run.
 2. Continue as described in README.md in `generative_inpainting` subfolder.
 
 # How to TRAIN
-2. Download dataset and insert it in `data` folder.
-3. Create a `.flist` file where are paths to the dataset files. (each file one line)<br>
+1. Download dataset and insert it in `data` folder.
+2. Create a `.flist` file where are paths to the dataset files. (each file one line)<br>
    It can be relative or absolute path.
-4. Continue as described in README.md in `generative_inpainting` subfolder.
+3. Continue as described in README.md in `generative_inpainting` subfolder.
 
 # Licensing + Credits
 Part of the [generative_inpainting](https://github.com/JiahuiYu/generative_inpainting) directory is also a [neuralgym](https://github.com/JiahuiYu/neuralgym) folder.
