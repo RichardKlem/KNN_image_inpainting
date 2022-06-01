@@ -29,9 +29,8 @@ The full version of project contains additionally:
 
 We made two branches to compare our changes to original project.<br>
 Branch with our code is named `beranek_klem` and the original one is named `yu_et_al`.<br>
-Note that we have came out from PR, which partly converts original project to the TensorFlow v2.<br>
-The `neuralgym` repository was taken also from TFv2 PR and has been only<br>
-slightly modified to make it all successfully run.
+Note that we have came out from a branch named `v1.0.0`, which is the correct one connected to the cited paper.<br>
+The `neuralgym` repository was taken also from TFv2 PR 15 and has not been changed.<br>
 
 
 # How to ... common stuff
