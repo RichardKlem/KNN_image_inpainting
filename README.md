@@ -56,3 +56,5 @@ The difference between ours and theirs work can be seen on branches `beranek_kle
 We take credits only on these particular changes. The rest goes to Yu and others.
 
 Please follow the LICENCE files in all sub-folders.
+
+We were able to train original model from scratch and our enhanced model each on single 3060 Ti/3070 Ti. That means 8 GB of VRAM is sufficient for batch size 8 witch consistent results.
