@@ -1,3 +1,4 @@
+# Python 3.8 required
 keras==2.8.0
 matplotlib==3.5.2
 numpy==1.22.3
